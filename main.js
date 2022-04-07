@@ -35,15 +35,16 @@ function main() {
       case "FULL":
         var ret = textContains("我知道了").findOne(100);
         if (ret) {
-          //   ret.parent().click();
-          click(ret.bounds().centerX(), ret.bounds().centerY());
+          ret.parent().click() ||
+            click(ret.bounds().centerX(), ret.bounds().centerY());
         }
         break;
 
       case "BUSY":
         var ret = textContains("返回购物车").findOne(100);
         if (ret) {
-          click(ret.bounds().centerX(), ret.bounds().centerY());
+          ret.parent().click() ||
+            click(ret.bounds().centerX(), ret.bounds().centerY());
         }
         break;
 
@@ -54,9 +55,11 @@ function main() {
       default:
         var ret =
           textContains("我知道了").findOnce() ||
-          textContains("返回购物车").findOnce();
+          textContains("返回购物车").findOnce() ||
+          text("确定").findOnce();
         if (ret) {
-          click(ret.bounds().centerX(), ret.bounds().centerY());
+          ret.parent().click() ||
+            click(ret.bounds().centerX(), ret.bounds().centerY());
         }
     }
   }
@@ -89,7 +92,14 @@ function set_full_selection() {}
 function getCurrentState() {
   var state = null;
   var cur_ac = currentActivity();
-  if (textContains("结算").exists()) {
+  if (
+    cur_ac == HOME_ACTIVATY &&
+    textContains("当前不在可下单时段")
+      .boundsInside(0, device.height / 4, device.width, device.height)
+      .exists()
+  ) {
+    state = "TIME_NOT_AVAILABLE";
+  } else if (textContains("结算").exists()) {
     //cur_ac == HOME_ACTIVATY &&
     state = "CART";
   } else if (textContains("已为您移除该商品").exists()) {
@@ -128,8 +138,8 @@ function pay() {
     .boundsInside(0, device.height / 2, device.width, device.height)
     .findOne(1000); //这里需要修改，因为有两个极速支付的地方
   if (quick_pay_btn) {
-    // quick_pay_btn.parent().click();
-    click(quick_pay_btn.bounds().centerX(), quick_pay_btn.bounds().centerY());
+    quick_pay_btn.parent().click();
+    // click(quick_pay_btn.bounds().centerX(), quick_pay_btn.bounds().centerY());
   }
 }
 
