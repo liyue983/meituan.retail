@@ -128,7 +128,8 @@ function pay() {
     .boundsInside(0, device.height / 2, device.width, device.height)
     .findOne(1000); //这里需要修改，因为有两个极速支付的地方
   if (quick_pay_btn) {
-    quick_pay_btn.parent().click();
+    // quick_pay_btn.parent().click();
+    click(quick_pay_btn.bounds().centerX(), quick_pay_btn.bounds().centerY());
   }
 }
 
