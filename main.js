@@ -93,7 +93,6 @@ function getCurrentState() {
   var state = null;
   var cur_ac = currentActivity();
   if (
-    cur_ac == HOME_ACTIVATY &&
     textContains("当前不在可下单时段")
       .boundsInside(0, device.height / 4, device.width, device.height)
       .exists()
