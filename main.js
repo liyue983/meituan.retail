@@ -43,14 +43,21 @@ function main() {
       case "BUSY":
         var ret = textContains("返回购物车").findOne(100);
         if (ret) {
-          //   ret.parent().click();
           click(ret.bounds().centerX(), ret.bounds().centerY());
         }
         break;
 
+      case "READY_TO_PAY_SELF":
       case "READY_TO_PAY":
         pay();
         break;
+      default:
+        var ret =
+          textContains("我知道了").findOnce() ||
+          textContains("返回购物车").findOnce();
+        if (ret) {
+          click(ret.bounds().centerX(), ret.bounds().centerY());
+        }
     }
   }
 }
@@ -93,6 +100,12 @@ function getCurrentState() {
     state = "BUSY";
   } else if (cur_ac == MRN_ACTIVATY && textContains("该时段已约满").exists()) {
     state = "TIME_NOT_AVAILABLE";
+  } else if (
+    cur_ac == MRN_ACTIVATY &&
+    textContains("站点自提").exists() &&
+    textContains("极速支付").exists()
+  ) {
+    state = "READY_TO_PAY_SELF";
   } else if (cur_ac == MRN_ACTIVATY && textContains("极速支付").exists()) {
     state = "READY_TO_PAY";
   }
@@ -111,7 +124,9 @@ function pay() {
   //     text(setSex).findOne().parent().click();
   //     setText(1, setPhone);
   //   }
-  var quick_pay_btn = text("极速支付").findOne(1000); //这里需要修改，因为有两个极速支付的地方
+  var quick_pay_btn = text("极速支付")
+    .boundsInside(0, device.height / 2, device.width, device.height)
+    .findOne(1000); //这里需要修改，因为有两个极速支付的地方
   if (quick_pay_btn) {
     quick_pay_btn.parent().click();
   }
