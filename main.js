@@ -30,6 +30,7 @@ function main() {
       case "REFRESH":
         refresh_cart();
         break;
+
       case "TIME_NOT_AVAILABLE":
       case "REMOVE":
       case "FULL":
@@ -65,14 +66,14 @@ function refresh_cart() {
 }
 
 function skip_ad() {
-  var skip_btn = id("btn_skip").findOne(500);
+  var skip_btn = id("btn_skip").findOne(200);
   if (skip_btn) {
     skip_btn.click();
   }
 }
 
 function goto_cart() {
-  var cart_btn = id("img_shopping_cart").findOne(500);
+  var cart_btn = id("img_shopping_cart").findOne(200);
   if (cart_btn) {
     cart_btn.parent().click();
   }
