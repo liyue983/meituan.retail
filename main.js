@@ -6,10 +6,50 @@ sleep(1000);
 HOME_ACTIVATY = "com.meituan.retail.c.android.newhome.newmain.NewMainActivity";
 MRN_ACTIVATY = "com.meituan.retail.c.android.mrn.mrn.MallMrnActivity";
 
+function main() {
+  skip_ad();
+  goto_cart();
+  while (1) {
+    sleep(300);
+    cur_state = getCurrentState();
+    switch (cur_state) {
+      case "CART":
+        var post_btn = textContains("结算").findOne(100);
+        if (post_btn) {
+          post_btn.parent().click();
+        }
+        break;
+      case "FULL":
+        var ret = textContains("我知道了").findOne(100);
+        if (ret) {
+          ret.parent().click();
+        }
+        break;
+      case "BUSY":
+        var ret = textContains("返回购物车").findOne(100);
+        if (ret) {
+          ret.parent().click();
+        }
+        break;
+      case "TIME_NOT_AVAILABLE":
+        break;
+      case "READY_TO_PAY":
+        pay();
+        break;
+    }
+  }
+}
+
 function skip_ad() {
   var skip_btn = id("btn_skip").findOne(1000);
   if (skip_btn) {
     skip_btn.click();
+  }
+}
+function goto_cart() {
+  var cart_btn = id("img_shopping_cart").findOne(1000);
+  if (cart_btn) {
+    cart_btn.parent().click();
   }
 }
 
@@ -31,45 +71,16 @@ function getCurrentState() {
   return state;
 }
 
-function main() {
-  skip_ad();
-  cart_btn = id("img_shopping_cart").findOne().parent().click();
-  while (1) {
-    sleep(500);
-    cur_state = getCurrentState();
-    switch (cur_state) {
-      case "CART":
-        var post_btn = textContains("结算").findOne(100);
-        if (post_btn) {
-          post_btn.parent().click();
-        }
-        break;
-      case "FULL":
-        break;
-      case "BUSY":
-        break;
-      case "TIME_NOT_AVAILABLE":
-        break;
-      case "READY_TO_PAY":
-        break;
-    }
+function pay(setInf = false, name = "李先生", sex = "先生", phone = "") {
+  if (setInf) {
+    setText(0, name);
+    text(sex).findOne().parent().click();
+    setText(1, phone);
+  }
+  var quick_pay_btn = text("极速支付").findOne(1000); //这里需要修改，因为有两个极速支付的地方
+  if (quick_pay_btn) {
+    quick_pay_btn.parent().click();
   }
 }
 
 main();
-// function pay(
-//   setInf = false,
-//   name = "李先生",
-//   sex = "先生",
-//   phone = ""
-// ) {
-//   if (setInf) {
-//     setText(0, name);
-//     text(sex).findOne().parent().click();
-//     setText(1, phone);
-//   }
-//   var quick_pay_btn = text("极速支付").findOne();#这里需要修改，因为有两个极速支付的地方
-//   if (quick_pay_btn) {
-//     quick_pay_btn.click();
-//   }
-// }
