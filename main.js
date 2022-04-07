@@ -2,7 +2,6 @@ auto.waitFor();
 var appName = "美团买菜";
 launchApp(appName);
 waitForPackage("com.meituan.retail.v.android", 100);
-sleep(1000);
 
 HOME_ACTIVATY = "com.meituan.retail.c.android.newhome.newmain.NewMainActivity";
 MRN_ACTIVATY = "com.meituan.retail.c.android.mrn.mrn.MallMrnActivity";
@@ -73,7 +72,7 @@ function skip_ad() {
 }
 
 function goto_cart() {
-  var cart_btn = id("img_shopping_cart").findOne(200);
+  var cart_btn = id("img_shopping_cart").findOne(1000);
   if (cart_btn) {
     cart_btn.parent().click();
   }
