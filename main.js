@@ -1,7 +1,8 @@
 auto.waitFor();
 var appName = "美团买菜";
 launchApp(appName);
-waitForPackage("com.meituan.retail.v.android", 100);
+PACKAGE_NAME = "com.meituan.retail.v.android";
+waitForPackage(PACKAGE_NAME, 100);
 
 HOME_ACTIVATY = "com.meituan.retail.c.android.newhome.newmain.NewMainActivity";
 MRN_ACTIVATY = "com.meituan.retail.c.android.mrn.mrn.MallMrnActivity";
@@ -13,8 +14,9 @@ function main() {
 
   while (1) {
     sleep(300);
-    cur_state = getCurrentState();
+    if (currentPackage() != PACKAGE_NAME) continue;
 
+    cur_state = getCurrentState();
     switch (cur_state) {
       case "CART":
         var post_btn = textContains("结算").findOne(100);
@@ -52,6 +54,12 @@ function main() {
       case "READY_TO_PAY":
         pay();
         break;
+
+      case "SUCCESS":
+        toast("成功");
+        device.vibrate(1500);
+        break;
+
       default:
         var ret =
           textContains("我知道了").findOnce() ||
@@ -98,12 +106,15 @@ function getCurrentState() {
       .exists()
   ) {
     state = "TIME_NOT_AVAILABLE";
-  } else if (textContains("结算").exists()) {
+  } else if (textContains("结算(").exists()) {
     //cur_ac == HOME_ACTIVATY &&
     state = "CART";
   } else if (textContains("已为您移除该商品").exists()) {
     state = "REMOVE";
-  } else if (cur_ac == MRN_ACTIVATY && textContains("运力已约满").exists()) {
+  } else if (
+    cur_ac == MRN_ACTIVATY &&
+    (textContains("运力已约满").exists() || textContains("订单已约满").exists())
+  ) {
     state = "FULL";
   } else if (cur_ac == MRN_ACTIVATY && textContains("前方拥堵").exists()) {
     state = "BUSY";
@@ -117,6 +128,8 @@ function getCurrentState() {
     state = "READY_TO_PAY_SELF";
   } else if (cur_ac == MRN_ACTIVATY && textContains("极速支付").exists()) {
     state = "READY_TO_PAY";
+  } else if (cur_ac == MRN_ACTIVATY && textContains("支付成功").exists()) {
+    state = "SUCCESS";
   }
   cart_count = state == "CART" ? cart_count + 1 : 0;
   if (cart_count >= 5) {
@@ -134,7 +147,7 @@ function pay() {
   //     setText(1, setPhone);
   //   }
   var quick_pay_btn = text("极速支付")
-    .boundsInside(0, device.height / 2, device.width, device.height)
+    .boundsInside(0, (device.height * 3) / 4, device.width, device.height)
     .findOne(1000); //这里需要修改，因为有两个极速支付的地方
   if (quick_pay_btn) {
     quick_pay_btn.parent().click();
