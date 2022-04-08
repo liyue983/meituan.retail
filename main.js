@@ -1,3 +1,5 @@
+const { exit } = require("process");
+
 auto.waitFor();
 var appName = "美团买菜";
 launchApp(appName);
@@ -58,6 +60,7 @@ function main() {
       case "SUCCESS":
         toast("成功");
         device.vibrate(1500);
+        exit();
         break;
 
       default:
@@ -128,7 +131,7 @@ function getCurrentState() {
     state = "READY_TO_PAY_SELF";
   } else if (cur_ac == MRN_ACTIVATY && textContains("极速支付").exists()) {
     state = "READY_TO_PAY";
-  } else if (cur_ac == MRN_ACTIVATY && textContains("支付成功").exists()) {
+  } else if (textContains("支付成功").exists()) {
     state = "SUCCESS";
   }
   cart_count = state == "CART" ? cart_count + 1 : 0;
