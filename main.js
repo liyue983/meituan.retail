@@ -1,5 +1,3 @@
-const { exit } = require("process");
-
 auto.waitFor();
 var appName = "美团买菜";
 launchApp(appName);
